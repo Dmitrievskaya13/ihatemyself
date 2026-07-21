@@ -145,6 +145,9 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             min-width: 80px;
             text-align: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         .nav-btn:hover {
@@ -153,6 +156,10 @@
             border-color: #ffffff;
             transform: scale(1.04);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
         }
 
         /* На белом фоне кнопки чёрные */
@@ -337,6 +344,26 @@
             } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 prevSlide();
+            }
+        });
+
+        // Свайпы для телефона
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
             }
         });
 
