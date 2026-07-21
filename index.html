@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Я чмоня помогите</title>
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            background: #ffffff;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+
+        .slide {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px 20px 80px;
+            transition: opacity 0.4s ease;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+
+        .slide-bg {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #slide1 {
+            background-image: url('1.jpg');
+        }
+        #slide2 {
+            background-image: url('2.jpg');
+        }
+        #slide3 {
+            background-image: url('3.jpg');
+        }
+        #slide4 {
+            background-image: url('4.jpg');
+        }
+
+        .slide-bg .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .slide-bg .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        .slide-bg .content h1 {
+            font-size: 3.8rem;
+            margin-bottom: 12px;
+        }
+
+        .slide-bg .content p {
+            font-size: 1.6rem;
+        }
+
+    
+        .slide-white {
+            background-color: #ffffff;
+        }
+
+        .center-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .center-text h1 {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            text-shadow: 4px 4px 12px rgba(255, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .center-text .arrow {
+            font-size: 6rem;
+            display: block;
+            margin-top: 20px;
+        }
+
+        /* ----- КНОПКИ (уменьшенные) ----- */
+        .nav-btn {
+            position: absolute;
+            bottom: 28px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.55);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 40px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+            z-index: 10;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #ffffff;
+            color: #0a192f;
+            border-color: #ffffff;
+            transform: scale(1.04);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        /* На белом фоне кнопки чёрные */
+        .slide-white .nav-btn {
+            color: #000000;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #000000;
+        }
+
+        .slide-white .nav-btn:hover {
+            background: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+
+        .btn-prev {
+            left: 30px;
+        }
+
+        .btn-next {
+            right: 30px;
+        }
+
+        .btn-prev.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: default;
+        }
+
+
+        @media (max-width: 768px) {
+            .center-text h1 {
+                font-size: 4.5rem;
+                letter-spacing: 6px;
+            }
+            .center-text .arrow {
+                font-size: 3.5rem;
+            }
+            .slide-bg .content h1 {
+                font-size: 2.6rem;
+            }
+            .slide-bg .content p {
+                font-size: 1.2rem;
+            }
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                min-width: 60px;
+                bottom: 20px;
+            }
+            .btn-prev {
+                left: 16px;
+            }
+            .btn-next {
+                right: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .center-text h1 {
+                font-size: 3rem;
+                letter-spacing: 4px;
+            }
+            .center-text .arrow {
+                font-size: 2.5rem;
+            }
+            .nav-btn {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+                min-width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container">
+
+
+        <div class="slide slide-bg active" id="slide1">
+            <div class="overlay"></div>
+            <button class="nav-btn btn-prev disabled" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+
+        <div class="slide slide-bg" id="slide2">
+            <div class="overlay"></div>
+            
+            <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+
+        <div class="slide slide-bg" id="slide3">
+            <div class="overlay"></div>
+            
+            <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+
+        <div class="slide slide-bg" id="slide4">
+            <div class="overlay"></div>
+
+            <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+
+        <div class="slide slide-white" id="slide5">
+            <div class="center-text">
+                <h1>
+                    ЭТО ЛЕВО
+                    <span class="arrow">⬅</span>
+                </h1>
+            </div>
+            <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+
+        <div class="slide slide-white" id="slide6">
+            <div class="center-text">
+                <h1>
+                    ЭТО ПРАВО
+                    <span class="arrow">➡</span>
+                </h1>
+            </div>
+            <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+            <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+        </div>
+
+    </div>
+
+    <script>
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function goToSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+
+            const prevBtn = document.querySelector('.btn-prev');
+            if (currentSlide === 0) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+
+            const nextBtn = document.querySelector('.btn-next');
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.textContent = 'Сначала →';
+            } else {
+                nextBtn.textContent = 'Дальше →';
+            }
+        }
+
+        function nextSlide() {
+            let nextIndex = (currentSlide + 1) % totalSlides;
+            goToSlide(nextIndex);
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Space') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        goToSlide(0);
+        console.log('на эту надпись всем пофиг');
+    </script>
+
+</body>
+</html>
