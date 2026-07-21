@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Я чмоня помогите</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .slider-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            position: absolute;
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            max-height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Слайды с картинками - картинка вписывается целиком */
+        .slide-bg {
+            background: #1a1a2e;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .slide-bg .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .slide-bg .content {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+            padding: 0 20px;
+            pointer-events: none;
+        }
+
+        .slide-bg .content h1 {
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .slide-bg .content p {
+            font-size: clamp(1rem, 2vw, 1.6rem);
+            opacity: 0.95;
+        }
+
+        /* Белые слайды */
+        .slide-white {
+            background: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .slide-white.active {
+            display: flex;
+        }
+
+        .center-text {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .center-text h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 900;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: clamp(3px, 2vw, 10px);
+            text-shadow: 4px 4px 12px rgba(255, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .center-text .arrow {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Кнопки */
+        .nav-btn {
+            position: fixed;
+            bottom: 30px;
+            padding: 10px 22px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            min-width: 80px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.92);
+        }
+
+        .slide-white .nav-btn {
+            color: #000;
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #000;
+        }
+
+        .btn-prev {
+            left: 20px;
+        }
+
+        .btn-next {
+            right: 20px;
+        }
+
+        .btn-prev.disabled {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        /* Мобилка - тот же прямоугольник, просто меньше */
+        @media (max-width: 768px) {
+            .slide {
+                width: 92%;
+                height: 75%;
+                max-width: 600px;
+                max-height: 450px;
+                border-radius: 16px;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                min-width: 60px;
+                bottom: 18px;
+                border-width: 1.5px;
+            }
+            .btn-prev {
+                left: 12px;
+            }
+            .btn-next {
+                right: 12px;
+            }
+
+            .slide-bg .content {
+                bottom: 20px;
+            }
+            .slide-bg .content h1 {
+                font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+            }
+            .slide-bg .content p {
+                font-size: clamp(0.8rem, 1.8vw, 1.2rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                width: 94%;
+                height: 68%;
+                max-width: 400px;
+                max-height: 350px;
+                border-radius: 14px;
+            }
+
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+                min-width: 50px;
+                bottom: 14px;
+            }
+            .btn-prev {
+                left: 8px;
+            }
+            .btn-next {
+                right: 8px;
+            }
+
+            .slide-bg .content {
+                bottom: 15px;
+            }
+            .slide-bg .content h1 {
+                font-size: clamp(1rem, 3vw, 1.6rem);
+            }
+            .slide-bg .content p {
+                font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            }
+        }
+
+        /* Ландшафт */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .slide {
+                height: 85%;
+                max-height: 400px;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slider-container">
+
+    <!-- 1 -->
+    <div class="slide slide-bg active" id="slide1">
+        <img src="1.jpg" alt="Слайд 1" />
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Это Котя</h1>
+            <p>Котя хотел кататься на машине под музыку и участвовать в гонках, но для этого Коте нужны были права</p>
+        </div>
+        <button class="nav-btn btn-prev disabled" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- 2 -->
+    <div class="slide slide-bg" id="slide2">
+        <img src="2.jpg" alt="Слайд 2" />
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Заголовок 2</h1>
+            <p>Текст для второго слайда</p>
+        </div>
+        <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- 3 -->
+    <div class="slide slide-bg" id="slide3">
+        <img src="3.jpg" alt="Слайд 3" />
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Заголовок 3</h1>
+            <p>Текст для третьего слайда</p>
+        </div>
+        <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- 4 -->
+    <div class="slide slide-bg" id="slide4">
+        <img src="4.jpg" alt="Слайд 4" />
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Заголовок 4</h1>
+            <p>Текст для четвёртого слайда</p>
+        </div>
+        <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- 5 - ЛЕВО -->
+    <div class="slide slide-white" id="slide5">
+        <div class="center-text">
+            <h1>ЭТО ЛЕВО<span class="arrow">⬅</span></h1>
+        </div>
+        <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- 6 - ПРАВО -->
+    <div class="slide slide-white" id="slide6">
+        <div class="center-text">
+            <h1>ЭТО ПРАВО<span class="arrow">➡</span></h1>
+        </div>
+        <button class="nav-btn btn-prev" onclick="prevSlide()">←</button>
+        <button class="nav-btn btn-next" onclick="nextSlide()">→</button>
+    </div>
+
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+
+    function goToSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[index].classList.add('active');
+        currentSlide = index;
+
+        const prev = document.querySelector('.btn-prev');
+        if (currentSlide === 0) {
+            prev.classList.add('disabled');
+        } else {
+            prev.classList.remove('disabled');
+        }
+
+        const next = document.querySelector('.btn-next');
+        next.textContent = currentSlide === total - 1 ? 'Сначала →' : 'Дальше →';
+    }
+
+    function nextSlide() {
+        goToSlide((currentSlide + 1) % total);
+    }
+
+    function prevSlide() {
+        if (currentSlide > 0) goToSlide(currentSlide - 1);
+    }
+
+    // Клавиши
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+        }
+    });
+
+    // Свайпы
+    let startX = 0;
+    document.addEventListener('touchstart', e => {
+        startX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', e => {
+        const diff = startX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 40) {
+            diff > 0 ? nextSlide() : prevSlide();
+        }
+    });
+
+    goToSlide(0);
+</script>
+
+</body>
+</html>
